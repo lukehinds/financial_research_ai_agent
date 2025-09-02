@@ -1,0 +1,33 @@
+# Financial Research AI Agent&#39; Dockerfile
+FROM cgr.dev/chainguard/wolfi-base
+
+ARG PYTHON_VERSION="3.12"
+
+RUN apk update && apk upgrade && \
+    apk add --no-cache python-$PYTHON_VERSION && \
+    apk add --no-cache uv
+
+WORKDIR /app
+
+# Copy dependency files
+COPY pyproject.toml ./
+
+# Install dependencies using uv for faster builds
+RUN uv sync
+
+# Copy application configuration
+COPY agentup.yml ./
+COPY .env ./
+
+# Create non-root user for security
+USER 65532:65532
+
+# Health check endpoint - using AgentUp's built-in health endpoint
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD python -c "import httpx; httpx.get('http://localhost:8000/health', timeout=5.0)" || exit 1
+
+# Expose the default AgentUp port
+EXPOSE 8000
+
+# Run the AgentUp agent using uvicorn (same as agentup run)
+CMD ["uv", "run", "uvicorn", "agent.api.app:app", "--host", "0.0.0.0", "--port", "8000"]

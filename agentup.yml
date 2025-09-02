@@ -1,0 +1,166 @@
+# API version for configuration evolution
+apiVersion: v1
+
+# Agent Information
+name: "Financial Research AI Agent&#39;"
+description: "AI Agent Financial Research AI Agent&#39; Project."
+version: "0.0.1"
+url: http://localhost:8000
+provider_organization: AgentUp
+provider_url: https://agentup.dev
+icon_url: https://raw.githubusercontent.com/RedDotRocket/AgentUp/refs/heads/main/assets/icon.png
+documentation_url: https://docs.agentup.dev
+
+# Agent Execution Configuration
+agent_type: "iterative"
+memory_config:
+  persistence: true
+  max_entries: 1000
+  ttl_hours: 24
+
+iterative_config:
+  max_iterations: 10
+  reflection_interval: 1
+  require_explicit_completion: true
+  timeout_minutes: 30
+
+# CORS Configuration
+cors:
+  enabled: True
+  origins: ["http://localhost:3000", "http://localhost:3001", "http://localhost:8080"]
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD"]
+  headers: ["Content-Type", "X-API-Key", "Authorization"]
+  allow_credentials: False
+  max_age: 600
+
+# Plugin configurations (use agentup plugin sync / add / remove)
+plugins: {}
+
+# Plugin defaults that plugins inherit
+plugin_defaults:
+  middleware:
+
+# Model Context Protocol
+mcp:
+  enabled: true
+  client_enabled: True
+  servers:
+    - name: "stdio"
+      enabled: true
+      transport: "stdio"
+      command: "python"
+      args: ["scripts/mcp/weather_server.py", "--transport", "stdio"]
+      timeout: 30
+      # Expose MCP tools as skills in AgentCard for multi-agent discovery
+      expose_as_skills: true
+      # MCP tools require explicit scope mapping using server:tool format
+      # This prevents naming conflicts when multiple servers expose similar tools
+      tool_scopes:
+        "stdio:get_alerts": ["alerts:read"]
+        "stdio:get_forecast": ["weather:read"]
+
+# Security Configuration
+security:
+  enabled: True
+  auth:
+    api_key:
+      header_name: X-API-Key
+      location: header
+      keys:
+        # Note, the following key is randomly generated during AgentUp project creation
+        - key: "EwXeXR4ty9IOnTnDSZ-uUrpVgWRh7Wdb"
+          scopes: ["api:admin", "files:read", "files:write"]
+  # Scope hierarchy for fine-grained authorization
+  scope_hierarchy:
+    # Admin scopes inherit all capabilities
+    api:admin: ["api:write", "api:read"]
+    api:write: ["api:read"]
+    # File operations hierarchy
+    files:admin: ["files:write", "files:read"]
+    files:write: ["files:read"]
+    # System operations hierarchy
+    system:admin: ["system:write", "system:read"]
+    system:write: ["system:read"]
+    weather:admin: ["alerts:read", "weather:read"]
+
+# AI Provider configuration
+ai_provider:
+  provider: openai
+  api_key: ${OPENAI_API_KEY}
+  model: gpt-4o-mini
+  stream: true
+  temperature: 0.7
+  max_tokens: 1000
+  top_p: 1.0
+
+# AI system prompt and configuration
+ai:
+  enabled: True
+  system_prompt: |
+    You are Financial Research AI Agent&#39;, an AI agent created with AgentUp.
+
+    Your role:
+    - Understand user requests naturally and conversationally
+    - Use the appropriate functions when needed to help users
+    - Provide helpful, accurate, and friendly responses
+    - Maintain context across conversations
+
+    Always be helpful, accurate, and maintain a friendly tone.
+
+# Global system-wide defaults
+global_defaults:
+  middleware:
+    rate_limiting:
+      enabled: false
+      requests_per_minute: 60
+      burst_size: 72
+    caching:
+      enabled: false
+      backend: memory
+      default_ttl: 300
+      max_size: 1000
+    retry:
+      enabled: false
+      max_attempts: 3
+      initial_delay: 1.0
+      max_delay: 60.0
+
+# Push notifications configuration
+push_notifications:
+  enabled: True
+  backend: memory
+  validate_urls: True
+  retry_attempts: 3
+  timeout: 30
+# Logging configuration
+logging:
+  enabled: True
+  level: "INFO"
+  format: "text"
+
+  # Console output settings
+  console:
+    enabled: True
+    colors: True
+
+  # Advanced features
+  correlation_id: False
+  request_logging: False
+  # Uvicorn integration
+  uvicorn:
+    access_log: False
+    disable_default_handlers: true
+    use_colors: True
+  # modules logging
+  modules:
+    "a2a": "ERROR" # Suppress all a2a logs below ERROR level
+    "a2a.utils": "ERROR" # Specifically suppress a2a.utils logs
+    "a2a.utils.telemetry": "ERROR" # Specifically suppress telemetry logs
+    "httpcore.connection": "ERROR"
+    "httpcore.http11": "ERROR"
+    "httpx": "ERROR"
+
+# Development configuration
+# WARNING: These features can be security risks and should NEVER be enabled in production
+development:
+  enabled: False  # Master switch for ALL development features
