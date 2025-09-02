@@ -1,146 +1,229 @@
-# FinancialResearchAiAgent
+# Financial Research AI Agent
 
-AI Agent Financial Research AI Agent&#39; Project.
+An intelligent autonomous agent designed to conduct comprehensive financial research, analysis, and reporting for investment professionals, analysts, and financial institutions.
 
-## Quick Start
+## Overview
 
-1. Install dependencies:
-   ```bash
-   uv sync
-   ```
+The Financial Research AI Agent is a sophisticated tool that automates the collection, analysis, and synthesis of financial data from multiple sources. It combines real-time market data, financial statements, news sentiment, and macroeconomic indicators to generate actionable investment insights and research reports.
 
-2. Configure your agent:
-   - Edit `agentup.yml` to customize skills, providers, and features
-   - Set environment variables in `.env` file
+## Key Features
 
-3. Start the development server:
-   ```bash
-   agentup run
-   ```
+### 📊 Multi-Source Data Integration
+- Real-time market data from major exchanges
+- SEC filings and regulatory documents
+- Financial news and media sentiment analysis
+- Economic indicators and macroeconomic data
+- Alternative data sources (satellite imagery, social media trends, etc.)
 
-   Or run direct with uvicorn:
-   ```bash
-   uv run uvicorn agent.api.app:app --reload --port 8000
-   ```
+### 🤖 Intelligent Analysis Capabilities
+- Automated fundamental analysis and ratio calculations
+- Technical analysis with pattern recognition
+- Sector and peer comparison analysis
+- Risk assessment and portfolio optimization
+- ESG (Environmental, Social, Governance) scoring
 
-### **Template-Specific Features**
-This agent was created with the **** template and includes:
+### 📈 Research Output Generation
+- Executive summary reports with key findings
+- Detailed investment thesis documents
+- Interactive dashboards and visualizations
+- Custom alerts and monitoring notifications
+- Automated presentation slides for client meetings
 
-- ✓ Advanced authentication and security schemes
+### 🔍 Advanced Analytics
+- Machine learning models for price prediction
+- Natural language processing for news sentiment
+- Anomaly detection for unusual market activities
+- Backtesting capabilities for strategy validation
+- Monte Carlo simulations for risk modeling
 
-## Development
-
-This agent runs from the AgentUp framework package.
-
-#### 1. Adding New Tools via Plugins
-
-**Create a Local Plugin:**
-```bash
-# Create plugin in the plugins directory
-agentup plugin init my-skill --output-dir plugins/
-
-# Install in development mode
-pip install -e plugins/my-skill
-
-# Add to agentup.yml
-```
-
-**Use Existing Plugins:**
-```bash
-# Install from PyPI
-pip install agentup-plugin-name
-
-# Or from Git
-pip install git+https://github.com/user/agentup-plugin-name
-```
-
-#### 2. Configuration-Based Customization
-
-**Modify Agent Behavior** (`agentup.yml`):
-```yaml
-skills:
-  - plugin_id: my_plugin_skill  # From installed plugin
-    name: My Skill
-    description: Custom skill via plugin
-    tags: [custom, business]
-    # Routing is now implicit - no configuration needed
-    priority: 100
-```
-
-**Environment Configuration** (`.env`):
-```bash
-# Set API keys and service URLs
-OPENAI_API_KEY=your_key_here
-GITHUB_TOKEN=your_token_here
-```
-
-#### 3. Framework Updates
-
-Your agent automatically gets framework updates when you upgrade AgentUp:
+## Installation
 
 ```bash
-# Upgrade to latest AgentUp version
-pip install --upgrade agentup
+# Clone the repository
+git clone https://github.com/yourorg/financial-research-ai-agent.git
+cd financial-research-ai-agent
 
-# Restart your agent - new features available immediately
-agentup run
+# Install dependencies
+pip install -r requirements.txt
+
+# Set up environment variables
+cp .env.example .env
+# Edit .env with your API keys and configuration
 ```
 
-## Testing
+## Configuration
 
-Test your agent using A2A-compliant JSON-RPC calls:
+### Required API Keys
+- **Bloomberg Terminal API** - For real-time market data
+- **Alpha Vantage** - Alternative market data source
+- **News API** - Financial news aggregation
+- **SEC EDGAR API** - Regulatory filings
+- **OpenAI/Anthropic API** - Natural language processing
 
+### Environment Variables
 ```bash
-# Test basic message handling
-curl -X POST http://localhost:8000/ \
-  -H "Content-Type: application/json" \
-  -d '{
-    "jsonrpc": "2.0",
-    "method": "message/send",
-    "params": {
-      "message": {
-        "role": "user",
-        "parts": [{"kind": "text", "text": "Hello"}],
-        "message_id": "msg-001",
-        "context_id": "ctx-001",
-        "kind": "message"
-      }
-    },
-    "id": "req-001"
-  }'
-
-# Test agent discovery
-curl http://localhost:8000/.well-known/agent-card.json
+BLOOMBERG_API_KEY=your_bloomberg_key
+ALPHA_VANTAGE_KEY=your_alpha_vantage_key
+NEWS_API_KEY=your_news_api_key
+OPENAI_API_KEY=your_openai_key
+DATABASE_URL=postgresql://user:password@localhost/finresearch
+REDIS_URL=redis://localhost:6379
 ```
 
-## Project Structure
+## Usage
+
+### Basic Research Query
+```python
+from financial_agent import FinancialResearchAgent
+
+agent = FinancialResearchAgent()
+
+# Analyze a single company
+report = agent.research_company(
+    ticker="AAPL",
+    analysis_depth="comprehensive",
+    time_horizon="12_months"
+)
+
+# Generate investment thesis
+thesis = agent.generate_investment_thesis(
+    ticker="AAPL",
+    target_price=True,
+    risk_factors=True
+)
+```
+
+### Sector Analysis
+```python
+# Analyze entire sector
+sector_report = agent.analyze_sector(
+    sector="technology",
+    comparison_metrics=["revenue_growth", "profit_margins", "valuation"],
+    top_picks=5
+)
+```
+
+### Portfolio Optimization
+```python
+# Optimize existing portfolio
+optimized_portfolio = agent.optimize_portfolio(
+    current_holdings={"AAPL": 0.3, "MSFT": 0.2, "GOOGL": 0.5},
+    risk_tolerance="moderate",
+    investment_horizon="long_term"
+)
+```
+
+### Custom Research Pipeline
+```python
+# Create custom research workflow
+pipeline = agent.create_pipeline([
+    "data_collection",
+    "fundamental_analysis",
+    "technical_analysis",
+    "sentiment_analysis",
+    "risk_assessment",
+    "report_generation"
+])
+
+results = pipeline.execute(ticker="TSLA")
+```
+
+## API Reference
+
+### Core Methods
+
+#### `research_company(ticker, analysis_depth, time_horizon)`
+Conducts comprehensive research on a single company.
+
+**Parameters:**
+- `ticker` (str): Stock ticker symbol
+- `analysis_depth` (str): "basic", "standard", or "comprehensive"
+- `time_horizon` (str): "1_month", "3_months", "6_months", "12_months"
+
+**Returns:** Research report object with financial metrics, analysis, and recommendations.
+
+#### `analyze_sector(sector, comparison_metrics, top_picks)`
+Performs sector-wide analysis and comparison.
+
+**Parameters:**
+- `sector` (str): Industry sector name
+- `comparison_metrics` (list): Metrics for comparison
+- `top_picks` (int): Number of top recommendations
+
+#### `generate_investment_thesis(ticker, target_price, risk_factors)`
+Creates detailed investment thesis document.
+
+**Parameters:**
+- `ticker` (str): Stock ticker symbol
+- `target_price` (bool): Include price target calculation
+- `risk_factors` (bool): Include detailed risk analysis
+
+## Data Sources
+
+The agent integrates with multiple financial data providers:
+
+- **Bloomberg Terminal** - Professional-grade market data
+- **Refinitiv Eikon** - Financial analytics and news
+- **S&P Capital IQ** - Corporate financial data
+- **FactSet** - Investment research platform
+- **Quandl** - Alternative and economic data
+- **SEC EDGAR** - Regulatory filings
+- **Financial news APIs** - Reuters, Bloomberg News, MarketWatch
+
+## Output Formats
+
+### Research Reports
+- **Executive Summary** - Key findings and recommendations
+- **Financial Analysis** - Detailed metrics and ratios
+- **Valuation Models** - DCF, comparable company analysis
+- **Risk Assessment** - Identified risks and mitigation strategies
+- **Technical Analysis** - Chart patterns and indicators
+
+### Data Exports
+- PDF reports for client distribution
+- Excel spreadsheets with raw data
+- JSON API responses for integration
+- Interactive HTML dashboards
+- PowerPoint presentation templates
+
+## Architecture
 
 ```
-financial_research_ai_agent/
-├── agentup.yml          # Main configuration
-├── .env                 # Environment variables  
-├── README.md           # This file
-├── pyproject.toml      # Dependencies (just agentup)
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   Data Sources  │────│  AI Processing │────│     Output      │
+│                 │    │                 │    │                 │
+│ • Market Data   │    │ • NLP Engine    │    │ • Reports       │
+│ • News Feeds    │    │ • ML Models     │    │ • Dashboards    │
+│ • SEC Filings   │    │ • Analytics     │    │ • Alerts        │
+│ • Economic Data │    │ • Risk Models   │    │ • API Responses │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
 ```
 
-## Deployment
+## Contributing
 
-The agent can be deployed anywhere Python runs:
+We welcome contributions to improve the Financial Research AI Agent. Please follow these guidelines:
 
-```bash
-uvicorn agent.api.app:app --host 0.0.0.0 --port 8000
-```
-
-
-## Documentation
-
-For more information:
-- [AgentUp Documentation](https://docs.agentup.dev)
-- [Plugin Development Guide](https://docs.agentup.dev/plugins)
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
 ## License
 
-Apache 2.0
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Disclaimer
+
+This software is for informational purposes only and should not be considered as financial advice. Always consult with qualified financial professionals before making investment decisions. Past performance does not guarantee future results.
+
+## Support
+
+- 📧 Email: support@financialagent.com
+- 📚 Documentation: [docs.financialagent.com](https://docs.financialagent.com)
+- 💬 Discord: [Join our community](https://discord.gg/financialagent)
+- 🐛 Issues: [GitHub Issues](https://github.com/yourorg/financial-research-ai-agent/issues)
 
 ---
-Created with [AgentUp](https://github.com/RedDotRocket/AgentUp)
+
+*Built with ❤️ for the financial research community*
