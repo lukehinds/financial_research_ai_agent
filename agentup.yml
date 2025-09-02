@@ -2,8 +2,8 @@
 apiVersion: v1
 
 # Agent Information
-name: "Financial Research AI Agent&#39;"
-description: "AI Agent Financial Research AI Agent&#39; Project."
+name: "Financial Research AI Agent"
+description: "AI Agent Financial Research AI Agent Project."
 version: "0.0.1"
 url: http://localhost:8000
 provider_organization: AgentUp
